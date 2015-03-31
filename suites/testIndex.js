@@ -3,8 +3,16 @@ var fs = require('fs');
 var test = require('selenium-webdriver/testing');
 var webdriver = require('selenium-webdriver');
 
+// Configuration
+var timeout = 30000;
+var url = process.env.rootTestUrl;
+var expectedTitle = "Digital Marketing - Email Marketing - Interactive Marketing | emfluence";
+var logoElementId = "logo";
+
+// Tests
 test.describe('Site index', function() {
-    this.timeout(15000);
+
+    this.timeout(timeout);
     var driver;
 
     test.before(function() {
@@ -14,17 +22,17 @@ test.describe('Site index', function() {
     });
 
     test.beforeEach(function() {
-        driver.get('http://emfluence.com/');
+        driver.get(url);
     });
 
     test.it('has correct title', function() {
         driver.getTitle().then(function(title) { 
-            assert.equal(title, "Digital Marketing - Email Marketing - Interactive Marketing | emfluence");
+            assert.equal(title, expectedTitle);
         });
     });
 
     test.it('has #logo element', function() {
-        driver.findElement(webdriver.By.id('logo'));
+        driver.findElement(webdriver.By.id(logoElementId));
     });
 
     test.after(function() {
