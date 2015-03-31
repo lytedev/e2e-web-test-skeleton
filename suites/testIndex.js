@@ -1,7 +1,8 @@
-var assert = require('assert');
 var fs = require('fs');
 var test = require('selenium-webdriver/testing');
 var webdriver = require('selenium-webdriver');
+var chai = require('chai');
+var assert = chai.assert;
 
 // Configuration
 var timeout = 30000;

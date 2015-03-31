@@ -1,5 +1,5 @@
 {
-  "repository": "ssh://vc.emfluence.com/git/test.suite.base.2015.mocha", 
+  "repository": "ssh://vc.emfluence.com/git/test.suite.base.2015.mocha",
   "devDependencies": {
     "chai": "^2.2.0",
     "chai-as-promised": "^4.3.0",
