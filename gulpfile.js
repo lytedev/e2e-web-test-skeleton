@@ -9,7 +9,8 @@ process.env.baseDriverTimeout = 30000;
 // Tests to run (array of blobs)
 testFiles = [
   'tests/e2e/index.js', // Required if running any e2e tests
-  'tests/e2e/**/*.test.js',
+  // 'tests/e2e/**/*.test.js',
+  'tests/e2e/pages/style-guide/*.test.js',
 ];
 
 // Testing task (run by default)

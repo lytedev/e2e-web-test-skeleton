@@ -12,8 +12,8 @@ test.describe('User login success and logout', function() {
     // This will fail if dflanagan is rate limited.
     // Clear rate limits for dflanagan (uid 83) with this query:
     // delete from flood where identifier like "83-%";
-    page.setUsername('dflanagan');
-    page.setPassword('veritable_nightmare');
+    page.setUsername(page.goodUsername);
+    page.setPassword(page.goodPassword);
 
     page.submit()
       .then(function() { e2e.checkTitle('Daniel Flanagan', true); })

@@ -11,8 +11,8 @@ test.describe('User login failure', function() {
 
     // Hopefully, this user never gets created...
     // Maybe use blank login info?
-    page.setUsername('s0m3_p00r_d00d');
-    page.setPassword('t0t4l_f41lur3');
+    page.setUsername(page.badUsername);
+    page.setPassword(page.badPassword);
 
     page.submit()
       .then(function() { page.defineLoginElements(); })

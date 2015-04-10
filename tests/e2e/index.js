@@ -80,9 +80,18 @@ var E2EBase = function() {
     return driver.getTitle().then(cb);
   };
 
-  this.checkSelector = function(selector) {
+  this.findElement = function(selector) {
     return driver.findElement(webdriver.By.css(selector));
   };
+
+  this.findElements = function(selector) {
+    return driver.findElements(webdriver.By.css(selector));
+  };
+
+  // Used purely for checking that an element exists
+  // We can simply use findElement as it will fail the test if it fails to find
+  // a matching element
+  this.checkSelector = this.findElement;
 
   this.checkUrl = function(expectedUrl, partial) {
     if (typeof partial === 'undefined') {
@@ -90,11 +99,24 @@ var E2EBase = function() {
     }
     var cb;
     if (partial == true) {
-      cb = function(url) { assert.equal(url, expectedUrl); };
-    } else {
       cb = function(url) { assert.include(url, expectedUrl); };
+    } else {
+      cb = function(url) { assert.equal(url, expectedUrl); };
     }
     return driver.getCurrentUrl().then(cb);
+  };
+
+  this.checkCssValue = function(element, cssAttribute, expectedCssValue, partial) {
+    if (typeof partial === 'undefined') {
+      partial = false;
+    }
+    var cb;
+    if (partial == true) {
+      cb = function(cssValue) { assert.include(cssValue, expectedCssValue); };
+    } else {
+      cb = function(cssValue) { assert.equal(cssValue, expectedCssValue); };
+    }
+    return element.getCssValue(cssAttribute).then(cb);
   };
 };
 
