@@ -1,4 +1,4 @@
-var LoginPage = function(test) {
+var LoginPageSpec = function(test) {
   e2e.defaultPageSpec(this, test);
 
   this.url += "/user";
@@ -63,4 +63,4 @@ var LoginPage = function(test) {
   };
 };
 
-module.exports = LoginPage;
+module.exports = LoginPageSpec;

@@ -1,22 +1,15 @@
-var StyleGuidePage = require('./style_guide.page_spec');
-var LoginPage = require('../../users/web_auth/auth.page_spec');
+var StyleGuidePageSpec = require('./style_guide.page_spec');
+var LoginPageSpec = require('../../users/web_auth/auth.page_spec')
 
 test.describe('Site styles', function() {
-  var sgpage = new StyleGuidePage(this);
-  var lpage = new LoginPage(this);
+  var StyleGuidePage = new StyleGuidePageSpec(this);
+  var LoginPage = new LoginPageSpec(this);
 
-  e2e.getBrowserBefore(this);
+  test.it('style guide page benner background color is gray', function() {
+    StyleGuidePage.get();
 
-  test.it('style guide page banner background color is gray', function() {
-    sgpage.get();
-    sgpage.defineElements();
-    e2e.checkCssValue(sgpage.pageBannerElement, 'background-color', 'rgba(51, 51, 51, 1)');
-
-    lpage.get();
-    sgpage.defineElements();
-    lpage.defineLoginElements();
-    e2e.checkCssValue(sgpage.pageBannerElement, 'background-color', 'rgba(51, 51, 51, 1)');
+    StyleGuidePage.defineElements();
+    e2e.checkCssValue(StyleGuidePage.pageBannerElement, 'background-color', StyleGuidePage.expectedPageHeadBackgroundColor)
   });
 
-  e2e.closeBrowserAfter(this);
 });

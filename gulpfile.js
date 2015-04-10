@@ -11,8 +11,10 @@ process.env.defaultBrowser = "phantomjs";
 e2eTestFiles = [
   'tests/e2e/index.js', // Required if running any e2e tests
   // 'tests/e2e/**/*.test.js',
-  'tests/e2e/users/web_auth/*.test.js',
-  // 'tests/e2e/pages/style-guide/*.test.js',
+  // 'tests/e2e/pages/index/*.test.js',
+  'tests/e2e/users/web_auth/login.test.js',
+  'tests/e2e/pages/style-guide/.test.js',
+  'tests/e2e/'
 
   // Tests for the tests
   // 'tests/e2e/pages/style-guide/example_phantomjs_css_failure.test_firefox.js',

@@ -1,10 +1,11 @@
-var StyleGuidePage = function(test) {
+var StyleGuidePageSpec = function(test) {
   e2e.defaultPageSpec(this, test);
 
   this.url += "/style-guide";
 
   this.pageBannerSelector = "#page-banner";
   this.pageHeadSelector = "#page-banner .page-title h1 .text";
+  this.expectedPageHeadBackgroundColor = 'rgba(51, 51, 51, 1)';
 
   this.defineElements = function() {
   	this.pageBannerElement = e2e.findElement(this.pageBannerSelector);
@@ -12,4 +13,4 @@ var StyleGuidePage = function(test) {
   };
 };
 
-module.exports = StyleGuidePage;
+module.exports = StyleGuidePageSpec;

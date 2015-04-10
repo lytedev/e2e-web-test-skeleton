@@ -1,18 +1,21 @@
-var IndexPage = require('./index.page_spec');
+var IndexPageSpec = require('./index.page_spec');
 
 test.describe('Site index page', function() {
-  var page = new IndexPage(this);
+ var IndexPage = new IndexPageSpec(this);
 
-  e2e.getBrowserBefore(this); // Load browser, get page via spec url
+ e2e.getBrowserBefore(this);
 
-  test.it('has correct title', function() {
-    page.get();
-    e2e.checkTitle(page.expectedPartialTitle, true);
-  });
+ test.it('has logo element', function() {
+   IndexPage.get();
 
-  test.it('has #logo element', function() {
-    e2e.checkSelector(page.logoElementSelector);
-  });
+   e2e.checkSelector(IndexPage.logoSelector);
+ });
 
-  e2e.closeBrowserAfter(this); // Close browser
+ test.it('has correct title', function() {
+   IndexPage.get();
+
+   e2e.checkTitle(IndexPage.expectedPartialTitle, true);
+ });
+
+ e2e.closeBrowserAfter(this); // Close browser
 });
