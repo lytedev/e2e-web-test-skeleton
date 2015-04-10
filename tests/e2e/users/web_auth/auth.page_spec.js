@@ -1,5 +1,5 @@
-var LoginPage = function() {
-  e2e.defaultPageSpec(this);
+var LoginPage = function(test) {
+  e2e.defaultPageSpec(this, test);
 
   this.url += "/user";
 
@@ -35,7 +35,30 @@ var LoginPage = function() {
   	return this.submitElement.click();
   };
 
+  this.login = function() {
+    this.get();
+    this.defineLoginElements();
+    return this.submitLoginForm();
+  }
+
+  this.submitLoginForm = function() {
+    this.setUsername(this.goodUsername);
+    this.setPassword(this.goodPassword);
+    return this.submit();
+  };
+
+  this.submitBadLoginForm = function() {
+    this.setUsername(this.badUsername);
+    this.setPassword(this.badPassword);
+    return this.submit();
+  };
+
   this.logout = function() {
+    this.defineLogoutElements();
+    return this.clickLogoutButton();
+  }
+
+  this.clickLogoutButton = function() {
   	return this.logoutElement.click();
   };
 };

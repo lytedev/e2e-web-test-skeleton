@@ -1,3 +1,4 @@
+// Load the modules our "inheriting" tests will use
 fs = require('fs');
 webdriver = require('selenium-webdriver');
 test = require('selenium-webdriver/testing');
@@ -20,16 +21,20 @@ var E2EBase = function() {
     return function() { callback.apply(object, args); };
   };
 
-  this.defaultPageSpec = function(that) {
+  this.defaultPageSpec = function(that, test) {
     that.timeout = process.env.baseDriverTimeout;
     that.url = process.env.rootTestUrl;
     that.preSetup = this.defaultPagePreSetup;
     that.get = this.defaultPageGet;
+    that.test = test;
+    that.test.timeout(that.timeout);
   };
 
-  this.defaultPagePreSetup = function(that) {
-    that.timeout(this.timeout);
-    that.page = this;
+  this.defaultPagePreSetup = function(test) {
+    if (typeof test !== 'undefined') {
+      this.test = test;
+    }
+    this.test.timeout(this.timeout);
   };
 
   this.defaultPageGet = function() {
@@ -39,31 +44,79 @@ var E2EBase = function() {
     return driver.get(this.url);
   };
 
-  this.defaultTestBeforeEach = function(that) {
-    // Sometimes we want to get the page before each test
+  this.getBrowserBeforeEach = function(that, cb) {
+    if (typeof cb === 'undefined') {
+      cb = function() { };
+    }
     return test.beforeEach(function() {
-      that.page.get();
-    });
-  };
-
-  this.defaultTestBefore = function(that) {
-    return test.before(function() {
+      cb();
       e2e.getBrowser();
-      that.page.get();
     });
   };
 
-  this.defaultTestAfter = function(that) {
-    return test.after(function() {
-      driver.quit();
+  this.getBrowserBefore = function(that, cb) {
+    if (typeof cb === 'undefined') {
+      cb = function() { };
+    }
+    return test.before(function() {
+      cb();
+      e2e.getBrowser();
+    });
+  };
+
+  this.closeBrowserAfterEach = function(that, cb) {
+    if (typeof cb === 'undefined') {
+      cb = function() { };
+    }
+    return test.afterEach(function() {
+      cb();
+      e2e.closeBrowser();
     })
   };
 
-  this.getBrowser = function() {
+  this.closeBrowserAfter = function(that, cb) {
+    if (typeof cb === 'undefined') {
+      cb = function() { };
+    }
+    return test.after(function() {
+      cb();
+      e2e.closeBrowser();
+    })
+  };
+
+  this.getChromeBrowser = function() {
+    driver = new webdriver.Builder()
+      .withCapabilities(webdriver.Capabilities.chrome())
+      .build();
+    return driver;
+  };
+
+  this.getFirefoxBrowser = function() {
+    driver = new webdriver.Builder()
+      .withCapabilities(webdriver.Capabilities.firefox())
+      .build();
+    return driver;
+  };
+
+  this.getPhantomJSBrowser = function() {
     driver = new webdriver.Builder()
       .withCapabilities(webdriver.Capabilities.phantomjs())
       .build();
     return driver;
+  };
+
+  this.getBrowser = function() {
+    var defaultBrowser = process.env.defaultBrowser;
+    if (defaultBrowser == "chrome") {
+      return this.getChromeBrowser();
+    } else if (defaultBrowser == "firefox") {
+      return this.getFirefoxBrowser();
+    }
+    return this.getPhantomJSBrowser();
+  };
+
+  this.closeBrowser = function() {
+    return driver.quit();
   };
 
   this.checkTitle = function(expectedTitle, partial) {

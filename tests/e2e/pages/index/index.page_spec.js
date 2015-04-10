@@ -1,5 +1,5 @@
-var IndexPage = function() {
-  e2e.defaultPageSpec(this);
+var IndexPage = function(test) {
+  e2e.defaultPageSpec(this, test);
 
   this.expectedPartialTitle = "Email Marketing";
   this.logoElementSelector = "#logo";
