@@ -1,4 +1,4 @@
-var LoginPage = require('./login.page_spec');
+var LoginPage = require('./auth.page_spec');
 
 test.describe('User login failure', function() {
   var page = new LoginPage();
@@ -7,16 +7,16 @@ test.describe('User login failure', function() {
   e2e.defaultTestBefore(this); // Load browser, get page via spec url
 
   test.it('login fails with bad credentials', function() {
-    page.defineElements();
+    page.defineLoginElements();
 
+    // Hopefully, this user never gets created...
+    // Maybe use blank login info?
     page.setUsername('s0m3_p00r_d00d');
     page.setPassword('t0t4l_f41lur3');
-    page.submit().then(function() {
-        driver.getCurrentUrl().then(function(url) {
-            page.defineElements();
-            assert.equal(url, page.url);
-        });
-    });
+
+    page.submit()
+      .then(function() { page.defineLoginElements(); })
+      .then(function() { e2e.checkUrl(page.url); });
   });
 
   e2e.defaultTestAfter(this); // Close browser

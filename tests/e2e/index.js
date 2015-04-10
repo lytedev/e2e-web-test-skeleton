@@ -5,8 +5,20 @@ chai = require('chai');
 chaiAsPromised = require('chai-as-promised');
 assert = chai.assert;
 
+// TODO: (dflanagan) Maybe load the following commonly-used functions
+// into the global scope as well?
+// describe = test.describe;
+// it = test.it;
+
 var E2EBase = function() {
   var e2e = this;
+
+  this.callAs = function(callback, object, args) {
+    if (typeof args === 'undefined') {
+      args = [];
+    }
+    return function() { callback.apply(object, args); };
+  };
 
   this.defaultPageSpec = function(that) {
     that.timeout = process.env.baseDriverTimeout;
@@ -59,19 +71,30 @@ var E2EBase = function() {
     if (typeof partial === 'undefined') {
       partial = false;
     }
+    var cb;
     if (partial == true) {
-      return driver.getTitle().then(function(title) {
-        assert.include(title, expectedTitle);
-      });
+      cb = function(title) { assert.include(title, expectedTitle); };
     } else {
-      return driver.getTitle().then(function(title) {
-        assert.equal(title, expectedTitle);
-      });
+      cb = function(title) { assert.equal(title, expectedTitle); };
     }
+    return driver.getTitle().then(cb);
   };
 
   this.checkSelector = function(selector) {
     return driver.findElement(webdriver.By.css(selector));
+  };
+
+  this.checkUrl = function(expectedUrl, partial) {
+    if (typeof partial === 'undefined') {
+      partial = false;
+    }
+    var cb;
+    if (partial == true) {
+      cb = function(url) { assert.equal(url, expectedUrl); };
+    } else {
+      cb = function(url) { assert.include(url, expectedUrl); };
+    }
+    return driver.getCurrentUrl().then(cb);
   };
 };
 
