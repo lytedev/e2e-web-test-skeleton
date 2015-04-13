@@ -1,4 +1,4 @@
-var LoginPageSpec = function(test) {
+var AuthPageSpec = function(test) {
   e2e.defaultPageSpec(this, test);
 
   this.url += "/user";
@@ -12,6 +12,9 @@ var LoginPageSpec = function(test) {
   this.goodPassword = "veritable_nightmare";
   this.badUsername = 's0m3_p00r_d00d';
   this.badPassword = 't0t4l_f41lur3';
+
+  this.expectedUsernameInTitle = "Daniel Flanagan";
+  this.expectedUserProfileUrl = process.env.rootTestUrl + "/users/dflanagan";
 
   this.defineLoginElements = function() {
   	this.usernameElement = e2e.findElement(this.usernameSelector);
@@ -34,6 +37,12 @@ var LoginPageSpec = function(test) {
   this.submit = function() {
   	return this.submitElement.click();
   };
+
+  this.badLogin = function() {
+    this.get();
+    this.defineLoginElements();
+    return this.submitBadLoginForm();
+  }
 
   this.login = function() {
     this.get();
@@ -63,4 +72,4 @@ var LoginPageSpec = function(test) {
   };
 };
 
-module.exports = LoginPageSpec;
+module.exports = AuthPageSpec;

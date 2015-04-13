@@ -1,53 +1,70 @@
+// TODO: Add watch task(s)
+// TODO: Add IE
+
 // Modules used for task-running
+require('./config.js');
 var gulp = require('gulp');
 var mocha = require('gulp-mocha');
 
-// Environment variables
-process.env.rootTestUrl = "http://www.emfluence.com";
-process.env.baseDriverTimeout = 30000;
-process.env.defaultBrowser = "phantomjs";
+// TODO: Default suites based on environment
+var defaultSuite = 'auth';
+// var defaultProductionSuite = ;
+// var defaultDevSuite = ;
 
-// Tests to run (array of blobs)
-e2eTestFiles = [
-  'tests/e2e/index.js', // Required if running any e2e tests
-  // 'tests/e2e/**/*.test.js',
-  // 'tests/e2e/pages/index/*.test.js',
-  'tests/e2e/users/web_auth/login.test.js',
-  'tests/e2e/pages/style-guide/.test.js',
-  'tests/e2e/'
+var e2eSuites = {
+  "auth": 'auth.suite'
+};
 
-  // Tests for the tests
-  // 'tests/e2e/pages/style-guide/example_phantomjs_css_failure.test_firefox.js',
-];
+var multiBrowserSuite = function(suiteKey) {
+  var phantomjs = function() {
+    process.env.defaultBrowser = "phantomjs";
+    return runE2ESuite(suiteKey);
+  };
+  var firefox = function() {
+    process.env.defaultBrowser = "firefox";
+    return runE2ESuite(suiteKey);
+  };
+  var chrome = function() {
+    process.env.defaultBrowser = "chrome";
+    return runE2ESuite(suiteKey);
+  };
+  // TODO: Add IE
+  var defaultBrowser = function() {
+    return runE2ESuite(suiteKey);
+  };
+  gulp.task(process.env.e2eTestPrefix + 'phantomjs-' + key, phantomjs);
+  gulp.task(process.env.e2eTestPrefix + 'firefox-' + key, firefox);
+  gulp.task(process.env.e2eTestPrefix + 'chrome-' + key, chrome);
+  // TODO: Add IE
+  gulp.task(process.env.e2eTestPrefix + key, defaultBrowser);
+};
 
-// Default task (specify the task that runs when you just run `gulp`)
-gulp.task('default', ['e2e-tests']);
+for (key in e2eSuites) {
+  multiBrowserSuite(key);
+}
 
-// Tasks!
-// You should never need to edit after this point
-// ... But that doesn't mean you can't!
+gulp.task('default', [process.env.e2eTestPrefix + defaultSuite]);
 
-gulp.task('e2e-tests-phantomjs', function() {
-  process.env.defaultBrowser = "phantomjs";
-  runE2ETests();
-});
+function runE2ESuite(suiteKey) {
+  var s = require('./tests/e2e/suites/' + e2eSuites[suiteKey] + ".js");
+  // Add base classes and browser init/teardown
+  for (var i = 0; i < s.tests.length; i++) {
+    s.tests[i] = "./tests/e2e/tests/" + s.tests[i];
+    s.tests[i] += ".js";
+  }
+  s.tests.splice(0, 0, './tests/e2e/index.js');
+  s.tests.splice(1, 0, './tests/e2e/setup_browser.js');
+  s.tests.push('./tests/e2e/destroy_browser.js');
+  return runE2ETests(s.tests);
+}
 
-gulp.task('e2e-tests-firefox', function() {
-  process.env.defaultBrowser = "firefox";
-  runE2ETests();
-});
+function runE2ESuites(_, suiteKeys) {
+  for (key in suiteKeys) {
+    return runE2ESuite(suiteKey);
+  }
+}
 
-gulp.task('e2e-tests-chrome', function() {
-  process.env.defaultBrowser = "chrome";
-  runE2ETests();
-});
-
-// TODO: Add IE
-
-gulp.task('e2e-tests', runE2ETests);
-
-function runE2ETests() {
-  return gulp.src(e2eTestFiles, { read: false })
-    .pipe(mocha())
-    ;
+function runE2ETests(glob) {
+  return gulp.src(glob, {read: false})
+    .pipe(mocha());
 }

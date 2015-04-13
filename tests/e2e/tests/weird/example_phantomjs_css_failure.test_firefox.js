@@ -8,19 +8,9 @@ test.describe('The PhantomJS webdriver will fail this test while Firefox or Chro
   var page = new StyleGuidePage();
   page.preSetup(this);
 
-  test.before(function() {
-  	// Uncomment different browsers and see for yourself!
-  	// e2e.getChromeBrowser();
-  	// e2e.getFirefoxBrowser();
-  	// e2e.getPhantomJSBrowser();
-  	e2e.getBrowser();
-  	page.get();
-  });
-
   test.it('page header is brand color', function() {
     page.defineElements();
     e2e.checkCssValue(page.pageHeadElement, 'background-color', 'rgba(241, 178, 57, 1)');
   });
 
-  e2e.defaultTestAfter(this); // Close browser
 });

@@ -5,6 +5,8 @@ test = require('selenium-webdriver/testing');
 chai = require('chai');
 chaiAsPromised = require('chai-as-promised');
 assert = chai.assert;
+describe = test.describe;
+it = test.it;
 
 // TODO: (dflanagan) Maybe load the following commonly-used functions
 // into the global scope as well?
@@ -13,6 +15,10 @@ assert = chai.assert;
 
 var E2EBase = function() {
   var e2e = this;
+
+  this.getSpec = function(spec) {
+    return require('./specs/' + spec + ".js");
+  }
 
   this.callAs = function(callback, object, args) {
     if (typeof args === 'undefined') {
@@ -104,6 +110,8 @@ var E2EBase = function() {
       .build();
     return driver;
   };
+
+  // TODO: Add IE
 
   this.getBrowser = function() {
     var defaultBrowser = process.env.defaultBrowser;
