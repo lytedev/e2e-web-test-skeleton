@@ -63,6 +63,7 @@ var AuthPageSpec = function(test) {
   };
 
   this.logout = function() {
+    this.get();
     this.defineLogoutElements();
     return this.clickLogoutButton();
   }

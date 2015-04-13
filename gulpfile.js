@@ -1,5 +1,5 @@
 // TODO: Add watch task(s)
-// TODO: Add IE
+// TODO: Add IE, Safari, Mobile, etc.
 
 // Modules used for task-running
 require('./config.js');
@@ -28,14 +28,14 @@ var multiBrowserSuite = function(suiteKey) {
     process.env.defaultBrowser = "chrome";
     return runE2ESuite(suiteKey);
   };
-  // TODO: Add IE
+  // TODO: Add IE, Safari, Mobile, etc.
   var defaultBrowser = function() {
     return runE2ESuite(suiteKey);
   };
   gulp.task(process.env.e2eTestPrefix + 'phantomjs-' + key, phantomjs);
   gulp.task(process.env.e2eTestPrefix + 'firefox-' + key, firefox);
   gulp.task(process.env.e2eTestPrefix + 'chrome-' + key, chrome);
-  // TODO: Add IE
+  // TODO: Add IE, Safari, Mobile, etc.
   gulp.task(process.env.e2eTestPrefix + key, defaultBrowser);
 };
 
@@ -53,8 +53,8 @@ function runE2ESuite(suiteKey) {
     s.tests[i] += ".js";
   }
   s.tests.splice(0, 0, './tests/e2e/index.js');
-  s.tests.splice(1, 0, './tests/e2e/setup_browser.js');
-  s.tests.push('./tests/e2e/destroy_browser.js');
+  s.tests.splice(1, 0, './tests/e2e/tests/start_browser.test.js');
+  s.tests.push('./tests/e2e/tests/close_browser.test.js');
   return runE2ETests(s.tests);
 }
 

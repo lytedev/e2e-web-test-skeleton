@@ -1,0 +1,15 @@
+{
+	"folders":
+	[
+		{
+			"name": "Project Root",
+			"path": "/Users/dflanagan/Documents/code/work/test_suite",
+			"folder_exclude_patterns": ["node_modules"]
+		},
+		{
+			"name": "E2E",
+			"path": "/Users/dflanagan/Documents/code/work/test_suite/tests/e2e",
+			"folder_exclude_patterns": ["node_modules"]
+		}
+	]
+}

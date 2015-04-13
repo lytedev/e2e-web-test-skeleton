@@ -5,8 +5,6 @@ test = require('selenium-webdriver/testing');
 chai = require('chai');
 chaiAsPromised = require('chai-as-promised');
 assert = chai.assert;
-describe = test.describe;
-it = test.it;
 
 // TODO: (dflanagan) Maybe load the following commonly-used functions
 // into the global scope as well?
@@ -44,10 +42,7 @@ var E2EBase = function() {
   };
 
   this.defaultPageGet = function() {
-    if (typeof driver === 'undefined') {
-      e2e.getBrowser();
-    }
-    return driver.get(this.url);
+    return e2e.driver.get(this.url);
   };
 
   this.getBrowserBeforeEach = function(that, cb) {
@@ -90,28 +85,32 @@ var E2EBase = function() {
     })
   };
 
+  // TODO: Use the builder API properly
   this.getChromeBrowser = function() {
-    driver = new webdriver.Builder()
+    if (typeof this.driver !== 'undefined') { return; }
+    this.driver = new webdriver.Builder()
       .withCapabilities(webdriver.Capabilities.chrome())
       .build();
-    return driver;
+    return this.driver;
   };
 
   this.getFirefoxBrowser = function() {
-    driver = new webdriver.Builder()
+    if (typeof this.driver !== 'undefined') { return; }
+    this.driver = new webdriver.Builder()
       .withCapabilities(webdriver.Capabilities.firefox())
       .build();
-    return driver;
+    return this.driver;
   };
 
   this.getPhantomJSBrowser = function() {
-    driver = new webdriver.Builder()
+    if (typeof this.driver !== 'undefined') { return; }
+    this.driver = new webdriver.Builder()
       .withCapabilities(webdriver.Capabilities.phantomjs())
       .build();
-    return driver;
+    return this.driver;
   };
 
-  // TODO: Add IE
+  // TODO: Add IE, Safari, Mobile, etc.
 
   this.getBrowser = function() {
     var defaultBrowser = process.env.defaultBrowser;
@@ -124,7 +123,9 @@ var E2EBase = function() {
   };
 
   this.closeBrowser = function() {
-    return driver.quit();
+    if (typeof this.driver !== 'undefined') {
+      return this.driver.quit();
+    }
   };
 
   this.checkTitle = function(expectedTitle, partial) {
@@ -138,15 +139,15 @@ var E2EBase = function() {
     } else {
       cb = function(title) { assert.equal(title, expectedTitle); };
     }
-    return driver.getTitle().then(cb);
+    return this.driver.getTitle().then(cb);
   };
 
   this.findElement = function(selector) {
-    return driver.findElement(webdriver.By.css(selector));
+    return this.driver.findElement(webdriver.By.css(selector));
   };
 
   this.findElements = function(selector) {
-    return driver.findElements(webdriver.By.css(selector));
+    return this.driver.findElements(webdriver.By.css(selector));
   };
 
   // Used purely for checking that an element exists
@@ -164,7 +165,7 @@ var E2EBase = function() {
     } else {
       cb = function(url) { assert.equal(url, expectedUrl); };
     }
-    return driver.getCurrentUrl().then(cb);
+    return this.driver.getCurrentUrl().then(cb);
   };
 
   this.checkCssValue = function(element, cssAttribute, expectedCssValue, partial) {
