@@ -2,6 +2,8 @@
 // never be modified. Any E2E test suite will have this test
 // injected to close the selenium webdriver.
 test.describe('Close browser', function() {
+  this.timeout(process.env.baseDriverTimeout);
+
   test.before(function() {
     e2e.closeBrowser();
   });

@@ -6,15 +6,25 @@ require('./config.js');
 var gulp = require('gulp');
 var mocha = require('gulp-mocha');
 
+process.env.e2eTestPrefix = "e2e-test-";
+var testPrefix = process.env.e2eTestPrefix;
+
 // TODO: Default suites based on environment
-var defaultSuite = 'auth';
-// var defaultProductionSuite = ;
-// var defaultDevSuite = ;
+var defaultProductionSuite = "production";
+var defaultDevSuite = "dev";
 
 var e2eSuites = {
-  "auth": 'auth.suite'
+  "dev": "dev.suite",
+  "prod": "production.suite", 
+  "production": "production.suite", 
 };
 
+var defaultSuite = defaultDevSuite;
+if (process.env.environmentType === "production") {
+  defaultSuite = "production";
+}
+
+// Create E2E gulp tasks from suite index
 var multiBrowserSuite = function(suiteKey) {
   var phantomjs = function() {
     process.env.defaultBrowser = "phantomjs";
@@ -32,19 +42,26 @@ var multiBrowserSuite = function(suiteKey) {
   var defaultBrowser = function() {
     return runE2ESuite(suiteKey);
   };
-  gulp.task(process.env.e2eTestPrefix + 'phantomjs-' + key, phantomjs);
-  gulp.task(process.env.e2eTestPrefix + 'firefox-' + key, firefox);
-  gulp.task(process.env.e2eTestPrefix + 'chrome-' + key, chrome);
+  // TODO: Add watch-style tasks
+  gulp.task(testPrefix + 'phantomjs-' + key, phantomjs);
+  gulp.task(testPrefix + 'firefox-' + key, firefox);
+  gulp.task(testPrefix + 'chrome-' + key, chrome);
   // TODO: Add IE, Safari, Mobile, etc.
-  gulp.task(process.env.e2eTestPrefix + key, defaultBrowser);
+  gulp.task(testPrefix + key, defaultBrowser);
 };
 
+// For every registered test suite, register the appropriate tasks
 for (key in e2eSuites) {
   multiBrowserSuite(key);
 }
 
-gulp.task('default', [process.env.e2eTestPrefix + defaultSuite]);
+gulp.task('default', [testPrefix + defaultSuite]);
 
+gulp.task('watch', ['default'], function() {
+  gulp.watch('./tests/**/*.js', ['default']);
+});
+
+// Run a single test suite
 function runE2ESuite(suiteKey) {
   var s = require('./tests/e2e/suites/' + e2eSuites[suiteKey] + ".js");
   // Add base classes and browser init/teardown
@@ -58,12 +75,14 @@ function runE2ESuite(suiteKey) {
   return runE2ETests(s.tests);
 }
 
+// Run a collection of test suites
 function runE2ESuites(_, suiteKeys) {
   for (key in suiteKeys) {
     return runE2ESuite(suiteKey);
   }
 }
 
+// Run a collection of tests
 function runE2ETests(glob) {
   return gulp.src(glob, {read: false})
     .pipe(mocha());

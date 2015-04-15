@@ -2,6 +2,8 @@
 // never be modified. Any E2E test suite will have this test
 // injected to start the selenium webdriver.
 test.describe('Start browser', function() {
+  this.timeout(process.env.baseDriverTimeout);
+
   test.before(function() {
     e2e.getBrowser();
   });
