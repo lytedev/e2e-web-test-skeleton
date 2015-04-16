@@ -19,5 +19,5 @@ rm chromedriver_mac32.zip
 
 # No Really, Make it *EASY*
 
-... This repo has a file named `get_chromedriver_osx.sh`. Run it.
+... This repo has a file named `bin/get_chromedriver_osx.sh`. Run it.
 

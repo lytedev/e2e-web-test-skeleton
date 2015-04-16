@@ -1,6 +1,6 @@
 module.exports = {
-  "name": "Development Tests",
-  "suites": [
-    "auth"
-  ]
+  "name": "Development Suites",
+  "tests": [
+    "style_guide.test",
+  ],
 };

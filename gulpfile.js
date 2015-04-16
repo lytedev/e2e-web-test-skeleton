@@ -2,10 +2,14 @@
 // TODO: Add IE, Safari, Mobile, etc.
 
 // Modules used for task-running
-require('./config.js');
 var gulp = require('gulp');
 var mocha = require('gulp-mocha');
 var path = require('path');
+
+require('./config.js');
+try {
+  require('./env.config.js');
+} catch (ex) { }
 
 process.env.e2eTestPrefix = "e2e-test-";
 var testPrefix = process.env.e2eTestPrefix;
@@ -19,7 +23,6 @@ var e2eSuites = {
   "development": "dev.suite",
   "prod": "production.suite",
   "production": "production.suite",
-  "auth": "auth.suite",
 };
 
 var defaultSuite = process.env.environmentType;
@@ -37,7 +40,7 @@ var multiBrowserSuite = function(suiteKey) {
       process.env.defaultBrowser = browser;
       return runE2ESuite(suiteKey);
     };
-    var taskName = testPrefix + browsers[i] + '-' + suiteKey;
+    var taskName = testPrefix + suiteKey + "-" + browser; 
     gulp.task(taskName, taskFunc);
 
     var watchTaskFunc = function() {
@@ -57,7 +60,7 @@ var multiBrowserSuite = function(suiteKey) {
       }
       // TODO: Come up with a good way to include specs...
       var watchFiles = ['./tests/e2e/specs/**/*.js'];
-      for (i in suites) {
+        for (i in suites) {
         var key = suites[i];
         watchFiles.push(actualSuiteFile(key));
         var suite = forceLoadSuite(key);
@@ -81,8 +84,8 @@ var multiBrowserSuite = function(suiteKey) {
   }
 
   // Default browser task and watch version
-  gulp.task(testPrefix + key, [testPrefix + process.env.defaultBrowser + "-" + suiteKey]);
-  gulp.task("watch-" + testPrefix + key, ["watch-" + testPrefix + process.env.defaultBrowser + "-" + suiteKey]);
+  gulp.task(testPrefix + key, [testPrefix + suiteKey + "-" + process.env.defaultBrowser]);
+  gulp.task("watch-" + testPrefix + key, ["watch-" + testPrefix + suiteKey + "-" + process.env.defaultBrowser]);
 };
 
 // For every registered test suite, register the appropriate tasks
@@ -90,9 +93,11 @@ for (key in e2eSuites) {
   multiBrowserSuite(key);
 }
 
-gulp.task('default', [testPrefix + defaultSuite]);
+gulp.task('e2e-test', [testPrefix + defaultSuite]);
+gulp.task('default', ['e2e-test']);
 
-gulp.task('watch', ["watch-" + testPrefix + defaultSuite]);
+gulp.task('watch-e2e-test', ["watch-" + testPrefix + defaultSuite]);
+gulp.task('watch', ['watch-e2e-test']);
 
 function actualSuiteFile(suiteKey) {
   var suiteFile = "";
@@ -117,8 +122,45 @@ function forceLoadSuite(suiteKey) {
   return require(suiteFile);
 }
 
+// function runE2ESuite(suiteKey, tests, dontTest) {
+//   var suite = forceLoadSuite(suiteKey);
+//   if (typeof tests === 'undefined') {
+//     tests = [];
+//   }
+//   if (typeof dontTest === 'undefined') {
+//     dontTest = false;
+//   }
+
+//   console.log(suiteKey, tests);
+
+//   for (var i in suite.suitesBefore) {
+//     runE2ESuite(suite.suitesBefore[i], tests, true);
+//   }
+
+//   tests.push('./tests/e2e/tests/start_browser.test.js');
+//   for (var i in suite.tests) {
+//     tests.push(actualTestFile(suite.tests[i]));
+//   }
+//   tests.push('./tests/e2e/tests/close_browser.test.js');
+
+//   for (var i in suite.suites) {
+//     runE2ESuite(suite.suites[i], tests, true);
+//   }
+
+//   if (!dontTest) {
+//     return runE2ETests(tests);
+//   }
+// }
+
+// function runE2ETests(glob) {
+//   glob.splice(0, 0, './tests/e2e/index.js');
+//   var stream = gulp.src(glob, {read: false})
+//     .pipe(mocha());
+//   return stream;
+// }
+
 // Run a single test suite
-function runE2ESuite(suiteKey) {
+function runE2ESuite(suiteKey, isNotFirstCall) {
   var suite = forceLoadSuite(suiteKey);
 
   runE2ESuites(suite.suitesBefore);
@@ -130,24 +172,40 @@ function runE2ESuite(suiteKey) {
     suite.tests.splice(0, 0, './tests/e2e/index.js');
     suite.tests.splice(1, 0, './tests/e2e/tests/start_browser.test.js');
     suite.tests.push('./tests/e2e/tests/close_browser.test.js');
-    var stream = runE2ETests(suite.tests);
+    runE2ETests(suite.tests);
   }
 
   runE2ESuites(suite.suites);
 
-  return stream;
+  if (typeof isNotFirstCall === 'undefined') {
+    return _e2eStreamStack[0]();
+  }
 }
 
 // Run a collection of test suites
 function runE2ESuites(suiteKeys) {
   if (typeof suiteKeys === 'undefined') return;
   for (i in suiteKeys) {
-    return runE2ESuite(suiteKeys[i]);
+    runE2ESuite(suiteKeys[i], true);
   }
 }
 
 // Run a collection of tests
+var _e2eStreamStack = [];
 function runE2ETests(glob) {
-  return gulp.src(glob, {read: false})
-    .pipe(mocha());
+  // This whole function is a silly hack since I'm not the best nodejs programmer
+  // in the world... or maybe even a proper one at all.
+  // Basically, we're turning the beautiful stream system node uses back into an
+  // ugly, hackish call stack because I can't properly use it.
+  // I'm sure this is illegal in every country ever.
+  var id = _e2eStreamStack.length;
+  _e2eStreamStack.push(function() {
+    var stream = gulp.src(glob, {read: false})
+      .pipe(mocha());
+    if (_e2eStreamStack.length > id + 1) {
+      stream.on('end', _e2eStreamStack[id + 1]);
+    }
+    return stream;
+  });
 }
+

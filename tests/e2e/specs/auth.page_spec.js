@@ -1,5 +1,5 @@
 var AuthPageSpec = function(test) {
-  e2e.defaultPageSpec(this, test);
+  e2e.defaultSpec(this, test);
 
   this.url += "/user";
 

@@ -1,6 +1,10 @@
 module.exports = {
-  "name": "Development Suites",
+  "name": "Production Suites",
+  "tests": [
+    "index.test",
+  ],
   "suites": [
-    "auth"
-  ]
+    "dev.suite",
+    "auth.suite", 
+  ],
 };

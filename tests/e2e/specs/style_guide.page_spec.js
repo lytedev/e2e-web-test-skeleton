@@ -1,5 +1,5 @@
 var StyleGuidePageSpec = function(test) {
-  e2e.defaultPageSpec(this, test);
+  e2e.defaultSpec(this, test);
 
   this.url += "/style-guide";
 

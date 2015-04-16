@@ -25,7 +25,7 @@ var E2EBase = function() {
     return function() { callback.apply(object, args); };
   };
 
-  this.defaultPageSpec = function(that, test) {
+  this.defaultSpec = function(that, test) {
     that.timeout = process.env.baseDriverTimeout;
     that.url = process.env.rootTestUrl;
     that.preSetup = this.defaultPagePreSetup;
@@ -124,7 +124,9 @@ var E2EBase = function() {
 
   this.closeBrowser = function() {
     if (typeof this.driver !== 'undefined') {
-      return this.driver.quit();
+      var oldDriver = this.driver.quit();
+      delete this.driver;
+      return oldDriver;
     }
   };
 
