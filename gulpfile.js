@@ -122,43 +122,6 @@ function forceLoadSuite(suiteKey) {
   return require(suiteFile);
 }
 
-// function runE2ESuite(suiteKey, tests, dontTest) {
-//   var suite = forceLoadSuite(suiteKey);
-//   if (typeof tests === 'undefined') {
-//     tests = [];
-//   }
-//   if (typeof dontTest === 'undefined') {
-//     dontTest = false;
-//   }
-
-//   console.log(suiteKey, tests);
-
-//   for (var i in suite.suitesBefore) {
-//     runE2ESuite(suite.suitesBefore[i], tests, true);
-//   }
-
-//   tests.push('./tests/e2e/tests/start_browser.test.js');
-//   for (var i in suite.tests) {
-//     tests.push(actualTestFile(suite.tests[i]));
-//   }
-//   tests.push('./tests/e2e/tests/close_browser.test.js');
-
-//   for (var i in suite.suites) {
-//     runE2ESuite(suite.suites[i], tests, true);
-//   }
-
-//   if (!dontTest) {
-//     return runE2ETests(tests);
-//   }
-// }
-
-// function runE2ETests(glob) {
-//   glob.splice(0, 0, './tests/e2e/index.js');
-//   var stream = gulp.src(glob, {read: false})
-//     .pipe(mocha());
-//   return stream;
-// }
-
 // Run a single test suite
 function runE2ESuite(suiteKey, isNotFirstCall) {
   var suite = forceLoadSuite(suiteKey);
