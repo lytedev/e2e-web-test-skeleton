@@ -56,7 +56,7 @@ var multiBrowserSuite = function(suiteKey) {
         }
       }
       // TODO: Come up with a good way to include specs...
-      var watchFiles = ['./tests/e2e/**/*spec.js'];
+      var watchFiles = ['./tests/e2e/specs/**/*.js'];
       for (i in suites) {
         var key = suites[i];
         watchFiles.push(actualSuiteFile(key));
