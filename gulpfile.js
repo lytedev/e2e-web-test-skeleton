@@ -15,13 +15,15 @@ var defaultDevSuite = "dev";
 
 var e2eSuites = {
   "dev": "dev.suite",
+  "development": "dev.suite",
   "prod": "production.suite", 
-  "production": "production.suite", 
+  "production": "production.suite",
+  "auth": "auth.suite", 
 };
 
-var defaultSuite = defaultDevSuite;
-if (process.env.environmentType === "production") {
-  defaultSuite = "production";
+var defaultSuite = process.env.environmentType;
+if (process.env.environmentType === "development") {
+  defaultSuite = "development";
 }
 
 // Create E2E gulp tasks from suite index
@@ -63,22 +65,36 @@ gulp.task('watch', ['default'], function() {
 
 // Run a single test suite
 function runE2ESuite(suiteKey) {
-  var s = require('./tests/e2e/suites/' + e2eSuites[suiteKey] + ".js");
-  // Add base classes and browser init/teardown
-  for (var i = 0; i < s.tests.length; i++) {
-    s.tests[i] = "./tests/e2e/tests/" + s.tests[i];
-    s.tests[i] += ".js";
+  var s = 0;
+  if (suiteKey in e2eSuites) {
+    s = require('./tests/e2e/suites/' + e2eSuites[suiteKey] + ".js");
+  } else {
+    s = require('./tests/e2e/suites/' + suiteKey + ".js");
   }
-  s.tests.splice(0, 0, './tests/e2e/index.js');
-  s.tests.splice(1, 0, './tests/e2e/tests/start_browser.test.js');
-  s.tests.push('./tests/e2e/tests/close_browser.test.js');
-  return runE2ETests(s.tests);
+  // Add base classes and browser init/teardown
+  if (typeof s.suitesBefore !== "undefined") {
+    runE2ESuites(s.suitesBefore);
+  }
+  if (typeof s.tests !== "undefined") {
+    for (var i = 0; i < s.tests.length; i++) {
+      s.tests[i] = "./tests/e2e/tests/" + s.tests[i];
+      s.tests[i] += ".js";
+    }
+    s.tests.splice(0, 0, './tests/e2e/index.js');
+    s.tests.splice(1, 0, './tests/e2e/tests/start_browser.test.js');
+    s.tests.push('./tests/e2e/tests/close_browser.test.js');
+    var stream = runE2ETests(s.tests);
+  }
+  if (typeof s.suites !== "undefined") {
+    runE2ESuites(s.suites);
+  }
+  return stream;
 }
 
 // Run a collection of test suites
-function runE2ESuites(_, suiteKeys) {
-  for (key in suiteKeys) {
-    return runE2ESuite(suiteKey);
+function runE2ESuites(suiteKeys) {
+  for (i in suiteKeys) {
+    return runE2ESuite(suiteKeys[i]);
   }
 }
 

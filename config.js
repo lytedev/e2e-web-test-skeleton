@@ -1,4 +1,4 @@
-process.env.rootTestUrl = "http://www.emfluence.com";
+process.env.rootTestUrl = "https://www.emfluence.com";
 
 process.env.environmentType = "production";
 

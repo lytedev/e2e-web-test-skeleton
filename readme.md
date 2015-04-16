@@ -52,3 +52,8 @@ Open `tests/config.js` and change the values inside to reflect your project.
 You can see a list of gulp tasks (test suites) with `gulp --tasks`. You can run
 all appropriate tests with the default task, which is run with just `gulp`.
 
+# TODO
+
+* Implement default tasks and the handling of them
+* Find out what's up with suites running weird on 'watch'-style tasks
+
