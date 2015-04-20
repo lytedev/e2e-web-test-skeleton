@@ -1,32 +1,38 @@
-// Modules used for task-running
 var gulp = require('gulp');
 var mocha = require('gulp-mocha');
 var path = require('path');
 
-require('./config.js');
+// Load environment configuration into environment vars
+var cfg = require('./config.js');
 try {
-  require('./env.config.js');
-} catch (ex) { }
+  var localcfg = require('./env.config.js');
+  for (key in localcfg) {
+    cfg[key] = localcfg[key];
+  }
+} catch (ex) { 
+  // Do nothing
+}
+for (key in cfg) {
+  process.enf[key] = cfg[key];
+}
 
-process.env.e2eTestPrefix = "e2e-test-";
+// This will define the prefix for all the gulp tasks. If you're not a fan of
+// the very verbose task names, you can make this blank. Just be sure you're not
+// going to overwrite any other tests that are added manually!
 var testPrefix = process.env.e2eTestPrefix;
 
+// Defines the suite index for creating gulp tasks
+var e2eSuites = process.env.testSuites;
+
+// Figure out our default test suite
 var defaultProductionSuite = "production";
 var defaultDevSuite = "dev";
-
-var e2eSuites = {
-  "dev": "dev.suite",
-  "development": "dev.suite",
-  "prod": "production.suite",
-  "production": "production.suite",
-};
-
 var defaultSuite = process.env.environmentType;
 if (process.env.environmentType === "development") {
   defaultSuite = "development";
 }
 
-// Create E2E gulp tasks from suite index
+// Create E2E gulp tasks from a test suite
 var multiBrowserSuite = function(suiteKey) {
   // TODO: Add other browsers
   var browsers = ["phantomjs", "firefox", "chrome"];
@@ -89,12 +95,19 @@ for (key in e2eSuites) {
   multiBrowserSuite(key);
 }
 
+// Define the default test
 gulp.task('e2e-test', [testPrefix + defaultSuite]);
+
+// Define the default gulp task (just the default test)
 gulp.task('default', ['e2e-test']);
 
+// Define the default watch test task
 gulp.task('watch-e2e-test', ["watch-" + testPrefix + defaultSuite]);
+
+// Define the default watch task (just the default watch test task)
 gulp.task('watch', ['watch-e2e-test']);
 
+// Builds a full relative path to an e2e Suite file
 function actualSuiteFile(suiteKey) {
   var suiteFile = "";
   if (suiteKey in e2eSuites) {
@@ -105,6 +118,7 @@ function actualSuiteFile(suiteKey) {
   return suiteFile;
 }
 
+// Builds a full relative path to an e2e Test file
 function actualTestFile(testFile) {
   var t = testFile;
   t = "./tests/e2e/tests/" + t;
@@ -112,6 +126,7 @@ function actualTestFile(testFile) {
   return t;
 }
 
+// Forces a reload of a test suite by cleared node's require cache
 function forceLoadSuite(suiteKey) {
   var suiteFile = actualSuiteFile(suiteKey);
   delete require.cache[path.resolve(suiteFile)];
@@ -149,8 +164,7 @@ function runE2ESuites(suiteKeys) {
   }
 }
 
-// Run a collection of tests
-var _e2eStreamStack = [];
+// Run a collection of tests in order 
 function runE2ETests(glob) {
   // This whole function is a silly hack since I'm not the best nodejs programmer
   // in the world... or maybe even a proper one at all.
@@ -167,4 +181,5 @@ function runE2ETests(glob) {
     return stream;
   });
 }
+var _e2eStreamStack = [];
 
