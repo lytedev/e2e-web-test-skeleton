@@ -1,6 +1,3 @@
-// TODO: Add watch task(s)
-// TODO: Add IE, Safari, Mobile, etc.
-
 // Modules used for task-running
 var gulp = require('gulp');
 var mocha = require('gulp-mocha');
@@ -14,7 +11,6 @@ try {
 process.env.e2eTestPrefix = "e2e-test-";
 var testPrefix = process.env.e2eTestPrefix;
 
-// TODO: Default suites based on environment
 var defaultProductionSuite = "production";
 var defaultDevSuite = "dev";
 
