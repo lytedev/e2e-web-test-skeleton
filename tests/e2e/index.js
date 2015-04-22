@@ -87,7 +87,7 @@ var E2EBase = function() {
 
   // TODO: Use the builder API properly
   this.getChromeBrowser = function() {
-    if (typeof this.driver !== 'undefined') { return; }
+    if (typeof this.driver !== 'undefined') { return this.driver; }
     this.driver = new webdriver.Builder()
       .withCapabilities(webdriver.Capabilities.chrome())
       .build();
@@ -95,7 +95,7 @@ var E2EBase = function() {
   };
 
   this.getFirefoxBrowser = function() {
-    if (typeof this.driver !== 'undefined') { return; }
+    if (typeof this.driver !== 'undefined') { return this.driver; }
     this.driver = new webdriver.Builder()
       .withCapabilities(webdriver.Capabilities.firefox())
       .build();
@@ -103,7 +103,7 @@ var E2EBase = function() {
   };
 
   this.getPhantomJSBrowser = function() {
-    if (typeof this.driver !== 'undefined') { return; }
+    if (typeof this.driver !== 'undefined') { return this.driver; }
     this.driver = new webdriver.Builder()
       .withCapabilities(webdriver.Capabilities.phantomjs())
       .build();

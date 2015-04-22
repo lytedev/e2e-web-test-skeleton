@@ -45,5 +45,7 @@ install` in the new `tests` directory.
 
 ## Configuration
 
-Open `config.js` and change the values inside to reflect your project. 
+Edit `config.js` and the values it contains to fit your project's general needs.
+
+Copy `config.js` to `env.config.js` and edit the values for your local testing purposes.
 

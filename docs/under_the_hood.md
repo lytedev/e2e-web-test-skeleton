@@ -71,5 +71,27 @@ end-to-end tests should be contained in the e2e object.
 
 Here's a quick list of the handy methods that you'll use all the time:
 
+* `e2e.defaultSpec(spec, test)` sets up your endpoint spec with some expected
+    default values and settings.
 * `e2e.getSpec(spec)` will `require('./specs/' + spec + ".js")`. Use this to
-	load all your endpoint spec files!
+    load all your endpoint spec files!
+* `e2e.checkTitle(expectedTitle, partial = false)` checks the title of the
+    current page in the browser. If `partial` is true, it will not check for
+    an exact match, but only that the title contains `expectedTitle` as
+    a substring.
+* `e2e.findElement(selector)` will return the first (I believe?) element
+    matching the passed css selector. See webdriver's `findElement()` and
+    `By.css(selector)` for details.
+* `e2e.findElements(selector)` will return an array of elements matching the
+    passed CSS selector.
+* `e2e.checkSelector(selector)` tests that an element matching the passed CSS
+    selector exists.
+* `e2e.checkUrl(expectedUrl, partial = false)` matches `checkTitle`'s
+    functionality but for the browser's URL instead of the title.
+* `e2e.checkCssValue(element, cssAttribute, expectedCssValue, partial = false)`
+    will check that the given `element` has a CSS property with the key
+    `cssAttribute` and that its value is equal to `expectedCssValue`. If
+    `partial` is true, we'll only check that the string _contains_
+    `expectedCssValue`. Note that not all values will appear exactly as
+    specified in your stylesheets. Colors, for example, will almost always be
+    in `rgb` or `rgba` formats. 

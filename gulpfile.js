@@ -9,24 +9,28 @@ try {
   for (key in localcfg) {
     cfg[key] = localcfg[key];
   }
-} catch (ex) { 
+} catch (ex) {
   // Do nothing
 }
 for (key in cfg) {
-  process.enf[key] = cfg[key];
+  process.env[key] = cfg[key];
 }
 
 // This will define the prefix for all the gulp tasks. If you're not a fan of
 // the very verbose task names, you can make this blank. Just be sure you're not
 // going to overwrite any other tests that are added manually!
-var testPrefix = process.env.e2eTestPrefix;
+var testPrefix = process.env.testPrefix;
 
 // Defines the suite index for creating gulp tasks
-var e2eSuites = process.env.testSuites;
+var e2eSuites = cfg.testSuites;
+
+// Define the default test suite in a production environment
+var defaultProductionSuite = "production";
+
+// Define the default test suite in a development environment
+var defaultDevSuite = "dev";
 
 // Figure out our default test suite
-var defaultProductionSuite = "production";
-var defaultDevSuite = "dev";
 var defaultSuite = process.env.environmentType;
 if (process.env.environmentType === "development") {
   defaultSuite = "development";
@@ -42,7 +46,7 @@ var multiBrowserSuite = function(suiteKey) {
       process.env.defaultBrowser = browser;
       return runE2ESuite(suiteKey);
     };
-    var taskName = testPrefix + suiteKey + "-" + browser; 
+    var taskName = testPrefix + suiteKey + "-" + browser;
     gulp.task(taskName, taskFunc);
 
     var watchTaskFunc = function() {
@@ -86,8 +90,8 @@ var multiBrowserSuite = function(suiteKey) {
   }
 
   // Default browser task and watch version
-  gulp.task(testPrefix + key, [testPrefix + suiteKey + "-" + process.env.defaultBrowser]);
-  gulp.task("watch-" + testPrefix + key, ["watch-" + testPrefix + suiteKey + "-" + process.env.defaultBrowser]);
+  gulp.task(testPrefix + suiteKey, [testPrefix + suiteKey + "-" + process.env.defaultBrowser]);
+  gulp.task("watch-" + testPrefix + suiteKey, ["watch-" + testPrefix + suiteKey + "-" + process.env.defaultBrowser]);
 };
 
 // For every registered test suite, register the appropriate tasks
@@ -164,13 +168,13 @@ function runE2ESuites(suiteKeys) {
   }
 }
 
-// Run a collection of tests in order 
+// Run a collection of tests in order
 function runE2ETests(glob) {
-  // This whole function is a silly hack since I'm not the best nodejs programmer
-  // in the world... or maybe even a proper one at all.
-  // Basically, we're turning the beautiful stream system node uses back into an
-  // ugly, hackish call stack because I can't properly use it.
-  // I'm sure this is illegal in every country ever.
+  // This whole function is a silly hack since I'm not the best nodejs
+  // programmer in the world... or maybe even a proper one at all. Basically,
+  // we're turning the beautiful stream system node uses back into an ugly,
+  // hackish call stack because I can't properly use it. I'm sure this is
+  // illegal in every country ever.
   var id = _e2eStreamStack.length;
   _e2eStreamStack.push(function() {
     var stream = gulp.src(glob, {read: false})
