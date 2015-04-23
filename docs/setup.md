@@ -31,7 +31,7 @@ Now we'll clone the skeleton project. We can remove the VCS info since this code
 will simply become part of your project. 
 
     git clone ssh://vc.emfluence.com/git/test.suite.base.2015.mocha tests
-	rm -rf tests/.git
+    rm -rf tests/.git
 
 Now we need to get the dependencies at the project level. Simply run `npm
 install` in the new `tests` directory.

@@ -6,3 +6,4 @@ var IndexPageSpec = function(test) {
 };
 
 module.exports = IndexPageSpec;
+
