@@ -17,7 +17,7 @@ system.
 Now that we have `npm`, we have some other binaries we need to install to your
 system. `mocha`, `gulp`, and `phantomjs`.
 
-	npm install -g mocha gulp phantomjs
+    npm install -g mocha gulp phantomjs
 
 ## Setup
 
@@ -25,19 +25,19 @@ Now that we have the project's binary dependencies on your device, we'll need to
 get the skeleton project. First, navigate to the project you want to add E2E
 test suites to.
 
-	cd ~/WebServer/my-project
+    cd ~/WebServer/my-project
 
 Now we'll clone the skeleton project. We can remove the VCS info since this code
 will simply become part of your project. 
 
-	git clone ssh://vc.emfluence.com/git/test.suite.base.2015.mocha tests
+    git clone ssh://vc.emfluence.com/git/test.suite.base.2015.mocha tests
 	rm -rf tests/.git
 
 Now we need to get the dependencies at the project level. Simply run `npm
 install` in the new `tests` directory.
 
-	cd tests
-	npm install
+    cd tests
+    npm install
 
 ## Configuration
 
