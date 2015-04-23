@@ -3,18 +3,14 @@
 First, let's walk through getting to the point where you're capable of running
 the test suites.
 
-## Homebrew
-
-I use Homebrew for managing dependencies and libraries. You may use whatever you
-wish! If you'd like to get Homebrew, just run this command: 
-
-	ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-
 ## Dependencies
 
-We're going to use Homebrew to install NodeJS and its package manager. Node's
-package manager `npm` is pretty fantastic and gives us the quickest/easiest
-access to the components that make up our E2E test suite system.
+We're going to use Homebrew to install NodeJS and its package manager. However,
+you may install NodeJS and NPM in whatever way works best for you. 
+
+Node's package manager `npm` is pretty fantastic and gives us the
+quickest/easiest access to the components that make up our E2E test suite
+system.
 
     brew install nodejs
 
